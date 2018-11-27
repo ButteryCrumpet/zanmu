@@ -19,7 +19,7 @@ fn main() {
 
     let db = TodoDB::new(&database_url).unwrap();
 
-    let results = db.all().unwrap();
+    let results = db.list().unwrap();
     for todo in results {
         println!("{:?}", todo);
     }
