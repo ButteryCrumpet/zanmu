@@ -14,6 +14,8 @@ type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 pub struct TodoDB(PgPool);
 
+type DB = diesel::pg::Pg;
+
 #[derive(Debug)]
 pub enum Error<'a> {
     ConnectionError,
@@ -32,17 +34,17 @@ impl TodoDB {
         self.0.get().map_err(|_| Error::ConnectionError)
     }
 
-    pub fn create(&self, new_todo: &NewTodo) -> Result<Todo, Error> {
+    //pub fn create<T: Insertable<todos::SqlType>>(&self, new_todo: &T) -> Result<Todo, Error> {
+//
+    //    diesel::insert_into(todos::table)
+    //        .values(new_todo)
+    //        .get_result(&self.get_conn()?)
+    //        .map_err(|_| Error::QueryError("Unable to create todo"))
+    //}
 
-        diesel::insert_into(todos::table)
-            .values(new_todo)
-            .get_result(&self.get_conn()?)
-            .map_err(|_| Error::QueryError("Unable to create todo"))
-    }
-
-     pub fn read(&self, todo_id: i32) -> Result<Todo, Error> {
+     pub fn read<T: Queryable<todos::SqlType, DB>>(&self, todo_id: i32) -> Result<T, Error> {
         todos::table.find(todo_id)
-            .first::<Todo>(&self.get_conn()?)
+            .first::<T>(&self.get_conn()?)
             .map_err(|_| Error::QueryError("Unable to get todo"))
     }
 
@@ -60,8 +62,8 @@ impl TodoDB {
             .map_err(|_| Error::QueryError("Unable to delete todo"))
     }
 
-    pub fn list(&self) -> Result<Vec<Todo>, Error> {
-        todos.load::<Todo>(&self.get_conn()?).map_err(|_| Error::QueryError("Unable to get todos"))
+    pub fn list<T: Queryable<todos::SqlType, DB>>(&self) -> Result<Vec<T>, Error> {
+        todos.load::<T>(&self.get_conn()?).map_err(|_| Error::QueryError("Unable to get todos"))
     }
 
     pub fn set_in_progress(&self, todo: &Todo) -> Result<Todo, Error> {

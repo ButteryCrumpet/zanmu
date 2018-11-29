@@ -10,7 +10,8 @@ pub mod models;
 pub mod db; 
 
 use self::db::TodoDB;
-  
+use models::{Todo, ListTodo};
+
 fn main() {
     dotenv().ok();
 
@@ -19,7 +20,7 @@ fn main() {
 
     let db = TodoDB::new(&database_url).unwrap();
 
-    let results = db.list().unwrap();
+    let results = db.list::<ListTodo>().unwrap();
     for todo in results {
         println!("{:?}", todo);
     }
