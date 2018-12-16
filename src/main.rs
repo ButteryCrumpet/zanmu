@@ -1,6 +1,5 @@
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
 
 use dotenv::dotenv;
 use std::env;
@@ -10,7 +9,7 @@ pub mod models;
 pub mod db; 
 
 use self::db::TodoDB;
-use models::{Todo, ListTodo};
+use crate::models::{Todo, ListTodo};
 
 fn main() {
     dotenv().ok();
@@ -22,6 +21,6 @@ fn main() {
 
     let results = db.list::<ListTodo>().unwrap();
     for todo in results {
-        println!("{:?}", todo);
+        println!("{}", serde_json::to_string(&todo).unwrap());
     }
 }

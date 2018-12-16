@@ -1,11 +1,11 @@
 use std::time::SystemTime;
 use diesel::prelude::*;
 
+use serde_derive::{Deserialize, Serialize};
+
 use super::schema::{projects, todos};
 
-type DB = diesel::pg::Pg;
-
-#[derive(Queryable, Identifiable, AsChangeset, Associations, Debug)]
+#[derive(Queryable, Identifiable, AsChangeset, Associations, Debug, Serialize, Deserialize)]
 #[belongs_to(Project)]
 pub struct Todo {
     pub id: i32,
@@ -18,14 +18,14 @@ pub struct Todo {
     pub project_id: Option<i32>, 
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ListTodo {
     pub id: i32,
     pub title: String,
     pub state: String,
 }
 
-impl Queryable<todos::SqlType, DB> for ListTodo {
+impl Queryable<todos::SqlType, diesel::pg::Pg> for ListTodo {
     type Row = (i32, String, String, bool, String, SystemTime, SystemTime, Option<i32>);
 
     fn build(row: Self::Row) -> Self {

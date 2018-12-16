@@ -1,11 +1,5 @@
-extern crate actix;
-extern crate actix_web;
-extern crate serde;
-extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-
 use actix_web::{server, App, HttpRequest, HttpResponse, Error, Responder, http};
+use serde_derive::{Serialize};
 
 #[derive(Serialize)]
 struct Thing {

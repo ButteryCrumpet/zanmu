@@ -4,10 +4,11 @@ use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PoolError, PooledConnection};
 
-use schema::todos;
-use schema::todos::dsl::*;
+use crate::schema::todos;
+use crate::schema::todos::SqlType;
+use crate::schema::todos::dsl::*;
 
-use models::{Todo, NewTodo, Project};
+use crate::models::{Todo, NewTodo, Project};
 
 type PgPool = Pool<ConnectionManager<PgConnection>>;
 type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
@@ -34,13 +35,13 @@ impl TodoDB {
         self.0.get().map_err(|_| Error::ConnectionError)
     }
 
-    //pub fn create<T: Insertable<todos::SqlType>>(&self, new_todo: &T) -> Result<Todo, Error> {
-//
-    //    diesel::insert_into(todos::table)
-    //        .values(new_todo)
-    //        .get_result(&self.get_conn()?)
-    //        .map_err(|_| Error::QueryError("Unable to create todo"))
-    //}
+    pub fn create<T: Insertable<todos::SqlType>>(&self, new_todo: &T) -> Result<Todo, Error> {
+
+        diesel::insert_into(todos::table)
+            .values(new_todo)
+            .get_result(&self.get_conn()?)
+            .map_err(|_| Error::QueryError("Unable to create todo"))
+    }
 
      pub fn read<T: Queryable<todos::SqlType, DB>>(&self, todo_id: i32) -> Result<T, Error> {
         todos::table.find(todo_id)
