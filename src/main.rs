@@ -1,14 +1,15 @@
-#[macro_use]
-extern crate diesel;
+#[macro_use] extern crate diesel;
 
 use dotenv::dotenv;
 use std::env;
 
 pub mod schema;
 pub mod models;
-pub mod db; 
+pub mod db;
+pub mod crud;
 
 use self::db::TodoDB;
+use self::crud::Crud;
 use crate::models::{Todo, ListTodo};
 
 fn main() {
